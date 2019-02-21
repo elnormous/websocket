@@ -12,9 +12,9 @@ namespace sha1
         return (value << bits) | ((value & 0xFFFFFFFF) >> (32 - bits));
     }
 
-    static constexpr uint32_t DIGEST_INTS = 5; // number of 32bit integers per SHA1 digest
-    static constexpr uint32_t BLOCK_INTS = 16; // number of 32bit integers per SHA1 block
-    static constexpr uint32_t BLOCK_BYTES = BLOCK_INTS * 4;
+    static const uint32_t DIGEST_INTS = 5; // number of 32bit integers per SHA1 digest
+    static const uint32_t BLOCK_INTS = 16; // number of 32bit integers per SHA1 block
+    static const uint32_t BLOCK_BYTES = BLOCK_INTS * 4;
 
     inline void transform(uint32_t block[BLOCK_BYTES], uint32_t digest[DIGEST_INTS])
     {
@@ -23,7 +23,7 @@ namespace sha1
             w[i] = block[i];
 
         for (int i = 16; i < 80; ++i)
-            w[i] = rotateLeft(w[i-3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1);
+            w[i] = rotateLeft(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1);
 
         uint32_t a = digest[0];
         uint32_t b = digest[1];
@@ -77,13 +77,16 @@ namespace sha1
         uint32_t digest[DIGEST_INTS] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
         std::vector<uint8_t> buffer;
         uint32_t block[BLOCK_INTS];
-        int b = 0;
+        uint32_t b = 0;
         for (b = 0; b + BLOCK_BYTES <= s.size(); b += BLOCK_BYTES)
         {
             buffer.assign(s.begin() + b, s.begin() + b + BLOCK_BYTES);
 
             for (uint32_t i = 0; i < BLOCK_INTS; i++)
-                block[i] = buffer[4 * i + 3] | buffer[4 * i + 2] << 8 | buffer[4 * i + 1] << 16 | buffer[4 * i + 0] << 24;
+                block[i] = static_cast<uint32_t>(buffer[4 * i + 3] |
+                                                 buffer[4 * i + 2] << 8 |
+                                                 buffer[4 * i + 1] << 16 |
+                                                 buffer[4 * i + 0] << 24);
 
             transform(block, digest);
         }
@@ -95,7 +98,10 @@ namespace sha1
             buffer.push_back(0x00);
 
         for (uint32_t i = 0; i < BLOCK_INTS; i++)
-            block[i] = buffer[4 * i + 3] | buffer[4 * i + 2] << 8 | buffer[4 * i + 1] << 16 | buffer[4 * i + 0] << 24;
+            block[i] = static_cast<uint32_t>(buffer[4 * i + 3] |
+                                             buffer[4 * i + 2] << 8 |
+                                             buffer[4 * i + 1] << 16 |
+                                             buffer[4 * i + 0] << 24);
 
         if (origSize > BLOCK_BYTES - 8)
         {
