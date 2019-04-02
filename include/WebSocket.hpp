@@ -112,13 +112,13 @@ public:
             else
             {
                 data.push_back(((masked ? 1 : 0) << 7) | 127); // masked, payload length
-                data.push_back((payload.size() >> 56) & 0xFF);
-                data.push_back((payload.size() >> 48) & 0xFF);
-                data.push_back((payload.size() >> 40) & 0xFF);
-                data.push_back((payload.size() >> 32) & 0xFF);
-                data.push_back((payload.size() >> 24) & 0xFF);
-                data.push_back((payload.size() >> 16) & 0xFF);
-                data.push_back((payload.size() >> 8) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 56) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 48) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 40) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 32) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 24) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 16) & 0xFF);
+                data.push_back((static_cast<uint64_t>(payload.size()) >> 8) & 0xFF);
                 data.push_back(payload.size() & 0xFF);
             }
 
